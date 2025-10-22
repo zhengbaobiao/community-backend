@@ -1,0 +1,47 @@
+### Java ###
+*.class
+*.jar
+*.war
+*.ear
+target/
+!.mvn/wrapper/maven-wrapper.jar
+
+### Maven ###
+.mvn/
+mvnw
+mvnw.cmd
+
+### IntelliJ IDEA ###
+.idea/
+*.iws
+*.iml
+*.ipr
+out/
+
+### Eclipse ###
+.settings/
+.classpath
+.project
+bin/
+
+### VS Code ###
+.vscode/
+
+### Logs ###
+logs/
+*.log
+log/
+
+### Temp files ###
+*.tmp
+*.bak
+*.swp
+*~.nib
+.DS_Store
+
+### Spring Boot ###
+HELP.md
+
+### Application ###
+application-dev.yml
+application-prod.yml
