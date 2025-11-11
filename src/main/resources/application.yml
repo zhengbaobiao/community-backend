@@ -1,0 +1,159 @@
+server:
+  port: 8080
+  servlet:
+    context-path: /admin-api
+
+spring:
+  application:
+    name: community-admin
+
+  # 数据源配置
+  datasource:
+    type: com.alibaba.druid.pool.DruidDataSource
+    driver-class-name: com.mysql.cj.jdbc.Driver
+    url: jdbc:mysql://localhost:3306/community_admin?useUnicode=true&characterEncoding=utf8&zeroDateTimeBehavior=convertToNull&useSSL=false&serverTimezone=Asia/Shanghai&allowPublicKeyRetrieval=true
+    username: root
+    password: root
+    druid:
+      # 初始连接数
+      initial-size: 5
+      # 最小连接池数量
+      min-idle: 10
+      # 最大连接池数量
+      max-active: 20
+      # 配置获取连接等待超时的时间
+      max-wait: 60000
+      # 配置间隔多久才进行一次检测,检测需要关闭的空闲连接,单位毫秒
+      time-between-eviction-runs-millis: 60000
+      # 配置一个连接在池中最小生存的时间,单位毫秒
+      min-evictable-idle-time-millis: 300000
+      # 配置一个连接在池中最大生存的时间,单位毫秒
+      max-evictable-idle-time-millis: 900000
+      # 配置检测连接是否有效
+      validation-query: SELECT 1
+      test-while-idle: true
+      test-on-borrow: false
+      test-on-return: false
+      # 打开PSCache,并且指定每个连接上PSCache的大小
+      pool-prepared-statements: true
+      max-pool-prepared-statement-per-connection-size: 20
+      # 配置监控统计拦截的filters,去掉后监控界面sql无法统计,'wall'用于防火墙
+      filters: stat,wall
+      # 通过connectProperties属性来打开mergeSql功能;慢SQL记录
+      connection-properties: druid.stat.mergeSql=true;druid.stat.slowSqlMillis=5000
+      # 配置DruidStatFilter
+      web-stat-filter:
+        enabled: true
+        url-pattern: /*
+        exclusions: "*.js,*.gif,*.jpg,*.bmp,*.png,*.css,*.ico,/druid/*"
+      # 配置DruidStatViewServlet
+      stat-view-servlet:
+        enabled: true
+        url-pattern: /druid/*
+        # IP白名单(没有配置或者为空,则允许所有访问)
+        allow: 127.0.0.1
+        # IP黑名单(存在共同时,deny优先于allow)
+        deny:
+        # 禁用HTML页面上的"Reset All"功能
+        reset-enable: false
+        # 登录名
+        login-username: admin
+        # 登录密码
+        login-password: admin123
+
+  # Redis配置
+  redis:
+    host: localhost
+    port: 6379
+    password:
+    database: 0
+    timeout: 5000ms
+    lettuce:
+      pool:
+        # 连接池最大连接数
+        max-active: 200
+        # 连接池最大阻塞等待时间(使用负值表示没有限制)
+        max-wait: -1ms
+        # 连接池中的最大空闲连接
+        max-idle: 10
+        # 连接池中的最小空闲连接
+        min-idle: 0
+
+  # Jackson配置
+  jackson:
+    time-zone: GMT+8
+    date-format: yyyy-MM-dd HH:mm:ss
+    default-property-inclusion: non_null
+
+# MyBatis Plus配置
+mybatis-plus:
+  # Mapper XML文件位置
+  mapper-locations: classpath*:/mapper/**/*.xml
+  # 实体类扫描,多个package用逗号或者分号分隔
+  type-aliases-package: com.community.admin.entity
+  configuration:
+    # 驼峰下划线转换
+    map-underscore-to-camel-case: true
+    # 配置日志
+    log-impl: org.apache.ibatis.logging.stdout.StdOutImpl
+  global-config:
+    db-config:
+      # 主键类型(AUTO:"数据库ID自增", INPUT:"用户输入ID", ID_WORKER:"全局唯一ID", UUID:"全局唯一ID UUID")
+      id-type: AUTO
+      # 逻辑删除配置
+      logic-delete-field: deleted
+      logic-delete-value: 1
+      logic-not-delete-value: 0
+
+# JWT配置
+jwt:
+  # 密钥(请在生产环境中使用强密钥并妥善保管)
+  secret: community-admin-jwt-secret-key-2024-please-change-in-production
+  # Token有效期(单位:秒) 2小时
+  expiration: 7200
+  # Token刷新时间(单位:秒) 1小时,在此时间内可以刷新Token
+  refresh-time: 3600
+  # Token前缀
+  token-prefix: Bearer
+  # Token请求头名称
+  header: Authorization
+
+# 日志配置
+logging:
+  level:
+    com.community.admin: debug
+    org.springframework.security: info
+  pattern:
+    console: '%d{yyyy-MM-dd HH:mm:ss.SSS} [%thread] %-5level %logger{50} - %msg%n'
+    file: '%d{yyyy-MM-dd HH:mm:ss.SSS} [%thread] %-5level %logger{50} - %msg%n'
+  file:
+    name: logs/community-admin.log
+    max-size: 100MB
+    max-history: 30
+
+# SpringDoc配置
+springdoc:
+  api-docs:
+    enabled: true
+    path: /v3/api-docs
+  swagger-ui:
+    enabled: true
+    path: /swagger-ui.html
+    tags-sorter: alpha
+    operations-sorter: alpha
+  group-configs:
+    - group: '认证授权'
+      paths-to-match:
+        - /auth/**
+    - group: '管理员管理'
+      paths-to-match:
+        - /admin/user/**
+    - group: '角色管理'
+      paths-to-match:
+        - /admin/role/**
+    - group: '权限管理'
+      paths-to-match:
+        - /admin/permission/**
+    - group: '操作日志'
+      paths-to-match:
+        - /admin/log/**
